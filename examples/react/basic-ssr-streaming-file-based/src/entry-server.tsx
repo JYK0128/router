@@ -1,26 +1,17 @@
-import { pipeline } from 'node:stream/promises'
 import {
   RouterServer,
   createRequestHandler,
   renderRouterToStream,
 } from '@tanstack/react-router/ssr/server'
-import { createRouter } from './router'
 import type express from 'express'
+import { pipeline } from 'node:stream/promises'
 import './fetch-polyfill'
+import { createRouter } from './router'
 
-export async function render({
-  req,
-  res,
-  head,
-}: {
-  head: string
-  req: express.Request
-  res: express.Response
-}) {
-  // Convert the express request to a fetch request
+export const createFetch = (req: express.Request) => {
   const url = new URL(req.originalUrl || req.url, 'https://localhost:3000').href
 
-  const request = new Request(url, {
+  return new Request(url, {
     method: req.method,
     headers: (() => {
       const headers = new Headers()
@@ -30,9 +21,10 @@ export async function render({
       return headers
     })(),
   })
+}
 
-  // Create a request handler
-  const handler = createRequestHandler({
+export const createSsrHandler = (request: Request, head: string) => {
+  return createRequestHandler({
     request,
     createRouter: () => {
       const router = createRouter()
@@ -47,6 +39,19 @@ export async function render({
       return router
     },
   })
+}
+
+/** 라우터 생성 */
+export async function render({req,res,head}: {
+  head: string
+  req: express.Request
+  res: express.Response
+}) {
+  // Convert the express request to a fetch request
+  const request = createFetch(req)
+
+  // Create a request handler
+  const handler = createSsrHandler(request, head)
 
   // Let's use the default stream handler to create the response
   const response = await handler(({ request, responseHeaders, router }) =>
