@@ -1,6 +1,7 @@
 import { HeadContent, Link, Outlet, Scripts, createRootRouteWithContext, } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import type { RouterContext } from '../routerContext'
+import { ContextProvider } from './-context/test'
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({
@@ -83,7 +84,9 @@ function RootComponent() {
           </Link>
         </div>
         <hr />
-        <Outlet /> {/* Start rendering router matches */}
+        <ContextProvider>
+          <Outlet /> {/* Start rendering router matches */}
+        </ContextProvider>
         <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
       </body>

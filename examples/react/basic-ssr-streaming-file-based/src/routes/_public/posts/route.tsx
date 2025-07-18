@@ -7,7 +7,7 @@ export type PostType = {
   body: string
 }
 
-export const Route = createFileRoute('/posts')({
+export const Route = createFileRoute('/_public/posts')({
   loader: async () => {
     console.info('Fetching posts...')
     await new Promise((r) =>

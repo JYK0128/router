@@ -12,10 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ErrorRouteImport } from './routes/error'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as ProtectedRouteImport } from './routes/_protected'
-import { Route as PostsRouteRouteImport } from './routes/posts/route'
-import { Route as PostsIndexRouteImport } from './routes/posts/index'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
-import { Route as PostsPostIdRouteImport } from './routes/posts/$postId'
+import { Route as PublicPostsRouteRouteImport } from './routes/_public/posts/route'
+import { Route as PublicPostsIndexRouteImport } from './routes/_public/posts/index'
+import { Route as PublicPostsPostIdRouteImport } from './routes/_public/posts/$postId'
 
 const ErrorRoute = ErrorRouteImport.update({
   id: '/error',
@@ -30,68 +30,67 @@ const ProtectedRoute = ProtectedRouteImport.update({
   id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PostsRouteRoute = PostsRouteRouteImport.update({
-  id: '/posts',
-  path: '/posts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PostsIndexRoute = PostsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PostsRouteRoute,
-} as any)
 const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PublicRoute,
 } as any)
-const PostsPostIdRoute = PostsPostIdRouteImport.update({
+const PublicPostsRouteRoute = PublicPostsRouteRouteImport.update({
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicPostsIndexRoute = PublicPostsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PublicPostsRouteRoute,
+} as any)
+const PublicPostsPostIdRoute = PublicPostsPostIdRouteImport.update({
   id: '/$postId',
   path: '/$postId',
-  getParentRoute: () => PostsRouteRoute,
+  getParentRoute: () => PublicPostsRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/posts': typeof PostsRouteRouteWithChildren
   '/error': typeof ErrorRoute
-  '/posts/$postId': typeof PostsPostIdRoute
+  '/posts': typeof PublicPostsRouteRouteWithChildren
   '/': typeof PublicIndexRoute
-  '/posts/': typeof PostsIndexRoute
+  '/posts/$postId': typeof PublicPostsPostIdRoute
+  '/posts/': typeof PublicPostsIndexRoute
 }
 export interface FileRoutesByTo {
   '/error': typeof ErrorRoute
-  '/posts/$postId': typeof PostsPostIdRoute
   '/': typeof PublicIndexRoute
-  '/posts': typeof PostsIndexRoute
+  '/posts/$postId': typeof PublicPostsPostIdRoute
+  '/posts': typeof PublicPostsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/posts': typeof PostsRouteRouteWithChildren
   '/_protected': typeof ProtectedRoute
   '/_public': typeof PublicRouteWithChildren
   '/error': typeof ErrorRoute
-  '/posts/$postId': typeof PostsPostIdRoute
+  '/_public/posts': typeof PublicPostsRouteRouteWithChildren
   '/_public/': typeof PublicIndexRoute
-  '/posts/': typeof PostsIndexRoute
+  '/_public/posts/$postId': typeof PublicPostsPostIdRoute
+  '/_public/posts/': typeof PublicPostsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/posts' | '/error' | '/posts/$postId' | '/' | '/posts/'
+  fullPaths: '/error' | '/posts' | '/' | '/posts/$postId' | '/posts/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/error' | '/posts/$postId' | '/' | '/posts'
+  to: '/error' | '/' | '/posts/$postId' | '/posts'
   id:
     | '__root__'
-    | '/posts'
     | '/_protected'
     | '/_public'
     | '/error'
-    | '/posts/$postId'
+    | '/_public/posts'
     | '/_public/'
-    | '/posts/'
+    | '/_public/posts/$postId'
+    | '/_public/posts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  PostsRouteRoute: typeof PostsRouteRouteWithChildren
   ProtectedRoute: typeof ProtectedRoute
   PublicRoute: typeof PublicRouteWithChildren
   ErrorRoute: typeof ErrorRoute
@@ -120,20 +119,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/posts': {
-      id: '/posts'
-      path: '/posts'
-      fullPath: '/posts'
-      preLoaderRoute: typeof PostsRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/posts/': {
-      id: '/posts/'
-      path: '/'
-      fullPath: '/posts/'
-      preLoaderRoute: typeof PostsIndexRouteImport
-      parentRoute: typeof PostsRouteRoute
-    }
     '/_public/': {
       id: '/_public/'
       path: '/'
@@ -141,35 +126,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicIndexRouteImport
       parentRoute: typeof PublicRoute
     }
-    '/posts/$postId': {
-      id: '/posts/$postId'
+    '/_public/posts': {
+      id: '/_public/posts'
+      path: '/posts'
+      fullPath: '/posts'
+      preLoaderRoute: typeof PublicPostsRouteRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/posts/': {
+      id: '/_public/posts/'
+      path: '/'
+      fullPath: '/posts/'
+      preLoaderRoute: typeof PublicPostsIndexRouteImport
+      parentRoute: typeof PublicPostsRouteRoute
+    }
+    '/_public/posts/$postId': {
+      id: '/_public/posts/$postId'
       path: '/$postId'
       fullPath: '/posts/$postId'
-      preLoaderRoute: typeof PostsPostIdRouteImport
-      parentRoute: typeof PostsRouteRoute
+      preLoaderRoute: typeof PublicPostsPostIdRouteImport
+      parentRoute: typeof PublicPostsRouteRoute
     }
   }
 }
 
-interface PostsRouteRouteChildren {
-  PostsPostIdRoute: typeof PostsPostIdRoute
-  PostsIndexRoute: typeof PostsIndexRoute
+interface PublicPostsRouteRouteChildren {
+  PublicPostsPostIdRoute: typeof PublicPostsPostIdRoute
+  PublicPostsIndexRoute: typeof PublicPostsIndexRoute
 }
 
-const PostsRouteRouteChildren: PostsRouteRouteChildren = {
-  PostsPostIdRoute: PostsPostIdRoute,
-  PostsIndexRoute: PostsIndexRoute,
+const PublicPostsRouteRouteChildren: PublicPostsRouteRouteChildren = {
+  PublicPostsPostIdRoute: PublicPostsPostIdRoute,
+  PublicPostsIndexRoute: PublicPostsIndexRoute,
 }
 
-const PostsRouteRouteWithChildren = PostsRouteRoute._addFileChildren(
-  PostsRouteRouteChildren,
-)
+const PublicPostsRouteRouteWithChildren =
+  PublicPostsRouteRoute._addFileChildren(PublicPostsRouteRouteChildren)
 
 interface PublicRouteChildren {
+  PublicPostsRouteRoute: typeof PublicPostsRouteRouteWithChildren
   PublicIndexRoute: typeof PublicIndexRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
+  PublicPostsRouteRoute: PublicPostsRouteRouteWithChildren,
   PublicIndexRoute: PublicIndexRoute,
 }
 
@@ -177,7 +177,6 @@ const PublicRouteWithChildren =
   PublicRoute._addFileChildren(PublicRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  PostsRouteRoute: PostsRouteRouteWithChildren,
   ProtectedRoute: ProtectedRoute,
   PublicRoute: PublicRouteWithChildren,
   ErrorRoute: ErrorRoute,
