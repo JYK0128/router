@@ -59,7 +59,8 @@ export async function render({req,res,head}: {
       request,
       responseHeaders,
       router,
-      children: <RouterServer router={router} />,
+      children:
+        <RouterServer router={router} />,
     }),
   )
 

@@ -3,6 +3,9 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/posts/')({
   component: PostsIndexComponent,
   wrapInSuspense: true,
+  head: () => ({
+    "meta": [{"title": '안녕'}]
+  }),
   errorComponent: ({ error }) => {
     return (
       <div className="text-red-500">Failed to load post: {error.message}</div>
